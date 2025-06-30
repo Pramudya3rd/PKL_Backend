@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "Users", // Nama tabel yang direferensikan
+        model: "Users",
         key: "id",
       },
     },
@@ -20,12 +20,12 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
-        model: "Villas", // Nama tabel yang direferensikan
+        model: "Villas",
         key: "id",
       },
     },
     checkInDate: {
-      type: DataTypes.DATEONLY, // Hanya tanggal, tanpa waktu
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
     checkOutDate: {
@@ -42,7 +42,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     paymentProof: {
-      type: DataTypes.STRING, // URL bukti pembayaran
+      type: DataTypes.STRING,
       allowNull: true,
     },
     createdAt: {
@@ -56,9 +56,6 @@ module.exports = (sequelize) => {
       defaultValue: DataTypes.NOW,
     },
   });
-
-  // Anda bisa menambahkan asosiasi di sini nanti (misal: Booking belongsTo User, Booking belongsTo Villa)
-  // Ini akan didefinisikan dalam index.js model utama
 
   return Booking;
 };

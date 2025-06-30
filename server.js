@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -8,27 +7,20 @@ const db = require("./models");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Impor rute
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const villaRoutes = require("./routes/villaRoutes"); // Import rute villa
+const villaRoutes = require("./routes/villaRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 
-// Impor error handler
 const errorHandler = require("./middleware/errorHandler");
 
-// Middleware standar
 app.use(express.json());
 app.use(cors());
 
-// --- Konfigurasi File Statis ---
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// --- Gunakan rute kontak ---
 app.use("/api/contact", contactRoutes);
 
-// --- Konfigurasi Multer untuk Bukti Pembayaran ---
 const paymentStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/payment-proofs/");
@@ -55,13 +47,12 @@ const paymentFileFilter = (req, file, cb) => {
 const uploadPayment = multer({
   storage: paymentStorage,
   fileFilter: paymentFileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// --- Konfigurasi Multer untuk Gambar Villa ---
 const villaImageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/villa-images/"); // Folder tujuan untuk gambar villa
+    cb(null, "uploads/villa-images/");
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -82,31 +73,20 @@ const villaImageFileFilter = (req, file, cb) => {
 const uploadVillaImages = multer({
   storage: villaImageStorage,
   fileFilter: villaImageFileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // Batas ukuran file lebih besar untuk gambar villa, misal 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
-// --- Akhir Konfigurasi Multer ---
 
-// Rute dasar (untuk testing)
 app.get("/", (req, res) => {
   res.send("API Villa Booking Berjalan!");
 });
 
-// Gunakan rute autentikasi
 app.use("/api/auth", authRoutes);
-
-// Gunakan rute pengguna
 app.use("/api/users", userRoutes);
+app.use("/api/villas", villaRoutes(uploadVillaImages));
+app.use("/api/bookings", bookingRoutes(uploadPayment));
 
-// Gunakan rute villa - Meneruskan instance Multer untuk gambar villa
-app.use("/api/villas", villaRoutes(uploadVillaImages)); // <-- UBAH INI
-
-// Gunakan rute pemesanan - Meneruskan instance Multer untuk bukti pembayaran
-app.use("/api/bookings", bookingRoutes(uploadPayment)); // <-- TETAP INI
-
-// Middleware penanganan error global
 app.use(errorHandler);
 
-// Sinkronisasi database dan mulai server
 db.sequelize
   .sync({ force: false })
   .then(() => {

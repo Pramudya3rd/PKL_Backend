@@ -1,12 +1,11 @@
-// routes/authRoutes.js
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-const resetPasswordController = require("../controllers/resetPasswordController"); // Import controller baru
+const resetPasswordController = require("../controllers/resetPasswordController");
 
 router.post("/register", authController.register);
 router.post("/login", authController.login);
-router.post("/forgot-password", resetPasswordController.forgotPassword); // Tambahkan rute ini
-router.post("/reset-password", resetPasswordController.resetPassword); // Tambahkan rute ini
+router.post("/forgot-password", resetPasswordController.forgotPassword);
+router.post("/reset-password", resetPasswordController.resetPassword);
 
 module.exports = router;

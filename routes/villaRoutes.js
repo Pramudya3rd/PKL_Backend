@@ -6,19 +6,14 @@ const {
   authorizeRoles,
 } = require("../middleware/authMiddleware");
 
-// UBAH module.exports menjadi fungsi yang menerima 'uploadVillaImages'
 module.exports = (uploadVillaImages) => {
-  // <-- UBAH INI
   const router = express.Router();
 
-  // Rute untuk menambah villa baru (Hanya Owner)
-  // uploadVillaImages.fields([]) untuk menerima multiple fields (mainImage dan additionalImages)
   router.post(
     "/",
     authenticateToken,
     authorizeRoles("owner"),
     uploadVillaImages.fields([
-      // <-- TAMBAHKAN MIDDLEWARE UPLOAD MULTER DI SINI
       { name: "mainImage", maxCount: 1 },
       { name: "additionalImages", maxCount: 10 },
     ]),
@@ -31,14 +26,12 @@ module.exports = (uploadVillaImages) => {
     authenticateToken,
     authorizeRoles("owner"),
     uploadVillaImages.fields([
-      // <-- TAMBAHKAN MIDDLEWARE UPLOAD MULTER DI SINI
       { name: "mainImage", maxCount: 1 },
       { name: "additionalImages", maxCount: 10 },
     ]),
     villaController.updateVilla
   );
 
-  // Rute lainnya tetap sama (tidak perlu Multer karena tidak ada upload file)
   router.get("/", authenticateToken, villaController.getAllVillas);
 
   router.get("/:id", authenticateToken, villaController.getVillaById);
